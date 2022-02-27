@@ -1,0 +1,49 @@
+---
+title: 'Semester Project OMIS 665'
+author: "Group 4"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document: default
+  pdf_document: default
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE, cache = F}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(error = TRUE)
+```
+
+#Introduction
+
+```{r}
+library(tidyverse)
+data1 <- read_csv("Loans.csv")
+```
+#Exploring the data with manipulations
+```{r}
+colnames(data1)
+view(data1)
+data1 %>% 
+  filter(loan_amnt>= 35000 & int_rate >= 10 )
+#This shows that there is very less data, if the loan amount is more than or equal to 35000 with an interest rate greater than 10. There are only 45,043 rows as compared to to 1048575 in the original data set.
+data1 %>% 
+  group_by(emp_title)
+#There are a total of 220,883 employee titles in the data set which can be seen from the number of groups if they are grouped by emp_title.
+data1 %>% 
+  group_by(home_ownership) %>% 
+  summarise(avg_loan_amt = mean(loan_amnt), min_loan_amt = min(loan_amnt), max_loan_amt = max(loan_amnt),n=n()) %>% 
+  arrange(desc(avg_loan_amt))
+#By running this code we observe that there are mainly 3 categories of home ownership and the rest 3 do not have enough observations to draw a conclusion from them. So we filter out those 3 categories by using filter for the categories we need and assign it to a new data. 
+data2 <- data1 %>% 
+  filter(home_ownership =="MORTGAGE"|home_ownership== "OWN"|home_ownership=="RENT")
+#Using the filter and assigning it to a new data removes the 3 categories from the data set.
+data2 %>% 
+  select(fico_score, emp_length) %>% 
+  filter(fico_score>= 730 & emp_length >= 10) %>% 
+  arrange(desc(fico_score))
+data2 %>% 
+  group_by(emp_title) %>% 
+  count()
+```
+
