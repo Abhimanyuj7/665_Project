@@ -23,7 +23,6 @@ data1 <- read_csv("Loans.csv")
 #Exploring the data with manipulations
 ```{r}
 colnames(data1)
-view(data1)
 data1 %>% 
   filter(loan_amnt>= 35000 & int_rate >= 10 )
 #This shows that there is very less data, if the loan amount is more than or equal to 35000 with an interest rate greater than 10. There are only 45,043 rows as compared to to 1048575 in the original data set.
@@ -37,11 +36,12 @@ data1 %>%
 #By running this code we observe that there are mainly 3 categories of home ownership and the rest 3 do not have enough observations to draw a conclusion from them. So we filter out those 3 categories by using filter for the categories we need and assign it to a new data. 
 data2 <- data1 %>% 
   filter(home_ownership =="MORTGAGE"|home_ownership== "OWN"|home_ownership=="RENT")
-#Using the filter and assigning it to a new data removes the 3 categories from the data set.
+#Using the filter and assigning it to a new data removes the 2 categories and NA's from the data set.
 data2 %>% 
-  select(fico_score, emp_length) %>% 
-  filter(fico_score>= 730 & emp_length >= 10) %>% 
-  arrange(desc(fico_score))
+  select(fico_score, emp_length,inq_last_6mths) %>% 
+  group_by(inq_last_6mths) %>% 
+  summarise(avg_fico = mean(fico_score), min_fico = min(fico_score), max_fico = max(fico_score), n=n())
+
 data2 %>% 
   group_by(emp_title) %>% 
   count()
