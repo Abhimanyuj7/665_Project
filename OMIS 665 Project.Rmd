@@ -25,7 +25,7 @@ data1 <- read_csv("Loans.csv")
 colnames(data1)
 data1 %>% 
   filter(loan_amnt>= 35000 & int_rate >= 10 )
-#This shows that there is very less data, if the loan amount is more than or equal to 35000 with an interest rate greater than 10. There are only 45,043 rows as compared to to 1048575 in the original data set.
+#This shows that there is very less data, if the loan amount is more than or equal to 35000 with an interest rate greater than 10. There are only 45,043 rows as compared to 1048575 in the original data set.
 data1 %>% 
   group_by(emp_title)
 #There are a total of 220,883 employee titles in the data set which can be seen from the number of groups if they are grouped by emp_title.
@@ -41,9 +41,25 @@ data2 %>%
   select(fico_score, emp_length,inq_last_6mths) %>% 
   group_by(inq_last_6mths) %>% 
   summarise(avg_fico = mean(fico_score), min_fico = min(fico_score), max_fico = max(fico_score), n=n())
-
+#inq_last_6mths is the column which tells how many inquiries where made in the last 6 months. From this we can observe that there are very few people who had been inquired 4,5 and 6 times in the last 6 months. But by observing the rest we can say that number of inquiries in last 6 months does affect the fico score but very marginally.
 data2 %>% 
-  group_by(emp_title) %>% 
-  count()
+  count(emp_title, sort = TRUE)
+#By looking at the observations we can see that there are a large number of people who did not reveal their employee titles as there are 73392 NA's in the emp_title column. Then there are a lot of teachers, managers and owners followed by few other employee titles who had loans.
+data2 %>%
+  select(home_ownership, emp_title, loan_amnt, annual_inc) %>%
+    filter(annual_inc >= 5000000) %>% 
+    arrange(desc(annual_inc))
+#The usual perspective of everyone is that people with huge annual income own a home, but the data tells otherwise. We can observe that most of the people with annual income greater than 5000000 are in a rented home or whose homes are under mortgage.
+data2 %>% 
+  select(grade, fico_score, loan_amnt) %>% 
+  filter(grade == "A") %>% 
+  arrange(desc(loan_amnt))
+#
+```
+#Exploring the data with visualizations
+```{r}
+ggplot(data = data2)+
+  geom_bar(mapping = aes(y = loan_amnt))
+#
 ```
 
